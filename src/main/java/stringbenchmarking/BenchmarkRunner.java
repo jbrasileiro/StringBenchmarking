@@ -43,7 +43,6 @@ public class BenchmarkRunner {
 		files.add(resultOutput);
 		files.add(resultJSON);
 		
-		
 		if (resultOutput.exists()) {
 			Zyz.out("converting");
 			JMHResult result = converter(resultOutput);
