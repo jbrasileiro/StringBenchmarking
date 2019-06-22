@@ -11,7 +11,7 @@ import stringbenchmarking.commons.DateProviderDefault;
 import stringbenchmarking.commons.exception.CustomEOFException;
 import stringbenchmarking.commons.exception.JMHRuntimeException;
 import stringbenchmarking.commons.exception.UnexpectedEOF;
-import stringbenchmarking.commons.io.ZuzFileReader;
+import stringbenchmarking.commons.zuz.ZuzFileReader;
 import stringbenchmarking.enums.BenchmarkModeEnum;
 import stringbenchmarking.result.beans.BenchmarkResult;
 import stringbenchmarking.result.beans.BenchmarkResultMany;

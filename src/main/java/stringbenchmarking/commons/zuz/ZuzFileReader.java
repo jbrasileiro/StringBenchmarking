@@ -1,4 +1,4 @@
-package stringbenchmarking.commons.io;
+package stringbenchmarking.commons.zuz;
 
 import java.io.File;
 import java.io.FileInputStream;
