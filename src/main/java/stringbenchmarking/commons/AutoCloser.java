@@ -5,6 +5,12 @@ import java.io.IOException;
 
 public class AutoCloser {
 
+	public void tryExecuteClose(Closeable in) {
+		if(in != null) {
+			executeClose(in);
+		}
+	}
+
 	public void executeClose(
 		Closeable obj) {
 		if(obj == null) {

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,7 +19,6 @@ import stringbenchmarking.commons.zuz.ZuzObjects;
 import stringbenchmarking.result.beans.JMHResult;
 import stringbenchmarking.result.converter.JMHOutputResultConverterDefault;
 
-@Ignore
 @RunWith(Parameterized.class)
 public class JMHOutputResultConverterDefaultPTest {
 

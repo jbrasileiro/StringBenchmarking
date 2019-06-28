@@ -30,7 +30,7 @@ public class WarmupMeasure
 	public String getScore() {
 		return score;
 	}
-	
+
 	public Double getScoreAsDouble() {
 		return DoubleConverter.toDouble(score);
 	}

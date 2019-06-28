@@ -232,7 +232,7 @@ abstract class ResourceRParameter<T> {
 		@Override
 		void closeResource() {
 			if (notFound()) {
-				new AutoCloser().executeClose(getResource());
+				new AutoCloser().tryExecuteClose(getResource());
 			}
 		}
 	}

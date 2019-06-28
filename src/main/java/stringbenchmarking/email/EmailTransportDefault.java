@@ -4,7 +4,7 @@ import javax.mail.MessagingException;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 
-public final class DefaultEmailTransport
+public final class EmailTransportDefault
 	implements
 	EMailTransport {
 

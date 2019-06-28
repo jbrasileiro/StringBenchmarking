@@ -12,8 +12,13 @@ import stringbenchmarking.commons.zuz.ZuzFiles;
 import stringbenchmarking.commons.zuz.Zyz;
 import stringbenchmarking.email.CustomAttachment;
 import stringbenchmarking.email.DefaultCustomAttachment;
+import stringbenchmarking.email.EMailProperties;
+import stringbenchmarking.email.EMailPropertyReader;
 import stringbenchmarking.email.EMailSender;
 import stringbenchmarking.email.EMailSenderDefault;
+import stringbenchmarking.email.EMailTransport;
+import stringbenchmarking.email.EmailTransportDefault;
+import stringbenchmarking.email.MimeMessageBuilder;
 import stringbenchmarking.io.JMHResultSerializer;
 import stringbenchmarking.result.beans.JMHResult;
 import stringbenchmarking.result.converter.JMHOutputResultConverter;
@@ -22,7 +27,14 @@ import stringbenchmarking.result.converter.JMHOutputResultConverterDefault;
 public class BenchmarkRunner {
 
 	private static final JMHOutputResultConverter CONVERTER = new JMHOutputResultConverterDefault();
-	private static final EMailSender EMAIL_SENDER = new EMailSenderDefault();
+	private static final EMailSender EMAIL_SENDER = newEMailSender();
+
+	private static EMailSender newEMailSender() {
+		EMailProperties eMailProperties = new EMailProperties(new EMailPropertyReader());
+		EMailTransport eMailTransport = new EmailTransportDefault();
+		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
+		return new EMailSenderDefault(eMailProperties, mimeMessageBuilder, eMailTransport);
+	}
 
 	public static void main(
 		String[] args)

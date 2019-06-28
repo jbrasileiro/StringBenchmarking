@@ -1,14 +1,14 @@
 package stringbenchmarking.email;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
@@ -24,14 +24,18 @@ public class EMailSenderDefault
 	implements
 	EMailSender {
 
+	private static final String DEFAULT_CHARSET = "UTF-8";
 	private final EMailProperties eMailProperties;
+	private final MimeMessageBuilder mimeMessageBuilder;
 	private final EMailTransport eMailTransport;
 
 	public EMailSenderDefault(
 		EMailProperties eMailProperties,
+		MimeMessageBuilder mimeMessageBuilder,
 		EMailTransport eMailTransport) {
 		super();
 		this.eMailProperties = eMailProperties;
+		this.mimeMessageBuilder = mimeMessageBuilder;
 		this.eMailTransport = eMailTransport;
 	}
 
@@ -40,39 +44,47 @@ public class EMailSenderDefault
 		String email,
 		String subject,
 		Collection<CustomAttachment> attachments) {
+		Address from = toAddress(email, email);
+		Address[] replyTo = null;
+		Address[] to = null;
+		Address[] cc = null;
+		Address[] bcc = null;
+		send(from, replyTo, to, cc, bcc, subject, attachments);
+	}
+
+	@Override
+	public boolean send(
+		Address from,
+		Address[] replyTo,
+		Address[] to,
+		Address[] cc,
+		Address[] bcc,
+		String subject,
+		Collection<CustomAttachment> attachments) {
 		String text = null;
 		if (text == null) {
 			text = "";
 		}
 		try {
-			Session session = get();
-			session.setDebug(true);
-			MimeMessage message = new MimeMessage(session);
-			message.addHeader("Content-type", "text/HTML; charset=UTF-8");
-			message.addHeader("format", "flowed");
-			message.addHeader("Content-Transfer-Encoding", "8bit");
-			message.setFrom(new InternetAddress("no_reply@example.com", "NoReply-JD"));
-			message.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
-			message.setSubject(subject, "UTF-8");
-			message.setSentDate(new Date());
-			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+			if (replyTo == null || replyTo.length == 0) {
+				replyTo = Arrays.asList(from).toArray(new Address[] {});
+			}
+			MimeMessage message = mimeMessageBuilder.buildDefault(getSession(), subject, from, replyTo, to, cc, bcc);
 			if (attachments == null || attachments.isEmpty()) {
-				message.setText(text, "UTF-8");
+				message.setText(text, DEFAULT_CHARSET);
 			} else {
 				Multipart multipart = new MimeMultipart();
 				BodyPart body = new MimeBodyPart();
 				body.setText(text);
 				multipart.addBodyPart(body);
 				for (CustomAttachment customAttachment : attachments) {
-					BodyPart attachment = new MimeBodyPart();
-					DataSource source = customAttachment.getDataSource();
-					attachment.setDataHandler(new DataHandler(source));
-					attachment.setFileName(customAttachment.getName());
+					BodyPart attachment = toAttachment(customAttachment);
 					multipart.addBodyPart(attachment);
 				}
 				message.setContent(multipart);
 			}
 			eMailTransport.send(message);
+			return true;
 		} catch (MessagingException e) {
 			throw new JMHRuntimeException(e);
 		} catch (UnsupportedEncodingException e) {
@@ -80,7 +92,27 @@ public class EMailSenderDefault
 		}
 	}
 
-	private Session get() {
+	private BodyPart toAttachment(
+		CustomAttachment customAttachment)
+		throws MessagingException {
+		BodyPart attachment = new MimeBodyPart();
+		DataSource source = customAttachment.getDataSource();
+		attachment.setDataHandler(new DataHandler(source));
+		attachment.setFileName(customAttachment.getName());
+		return attachment;
+	}
+
+	private Address toAddress(
+		String address,
+		String name) {
+		try {
+			return new InternetAddress(address, name, DEFAULT_CHARSET);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private Session getSession() {
 		Authenticator auth = new Authenticator() {
 
 			@Override

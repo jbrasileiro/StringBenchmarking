@@ -1,8 +1,5 @@
 package stringbenchmarking.commons.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -18,18 +15,6 @@ public final class PropertyLoader {
 	}
 
 	public static Properties load(
-		final Class<?> clazz,
-		final String name) {
-		InputStream in = null;
-		try {
-			in = ResourceClassLoader.getResourceAsStream(clazz, name);
-			return load(in);
-		} finally {
-			new AutoCloser().executeClose(in);
-		}
-	}
-
-	public static Properties load(
 		final InputStream in) {
 		try {
 			Properties prop = new Properties();
@@ -38,16 +23,7 @@ public final class PropertyLoader {
 		} catch (IOException e) {
 			throw new RuntimeException("Error loading properties", e);
 		} finally {
-			new AutoCloser().executeClose(in);
-		}
-	}
-
-	public static Properties load(
-		final File file) {
-		try {
-			return load(new FileInputStream(file));
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("Error loading properties", e);
+			new AutoCloser().tryExecuteClose(in);
 		}
 	}
 }
