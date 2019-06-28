@@ -28,7 +28,7 @@ SET TIMESTAMP=%TIMESTAMP: =%
 
 ECHO "TIMESTAMP: " %TIMESTAMP% 
 
-CMD /C mvn clean install -q -DskipTests
+CMD /C mvnw clean install -q -DskipTests
 
 copy target\string-benchmarking-J6u45.1.1.jar c:\.tmp\JMH\%TIMESTAMP%.jar
 
