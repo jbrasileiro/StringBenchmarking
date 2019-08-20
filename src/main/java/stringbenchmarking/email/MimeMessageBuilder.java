@@ -47,6 +47,6 @@ public final class MimeMessageBuilder {
 
 	private boolean notEmpty(
 		Object[] array) {
-		return array != null || !Arrays.asList(array).isEmpty();
+		return array != null && !Arrays.asList(array).isEmpty();
 	}
 }

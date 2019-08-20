@@ -44,9 +44,9 @@ public class EMailSenderDefault
 		String email,
 		String subject,
 		Collection<CustomAttachment> attachments) {
-		Address from = toAddress(email, email);
+		Address from = toAddress(eMailProperties.getUser(), eMailProperties.getUser());
 		Address[] replyTo = null;
-		Address[] to = null;
+		Address[] to = new Address[]{toAddress(email, email)};
 		Address[] cc = null;
 		Address[] bcc = null;
 		send(from, replyTo, to, cc, bcc, subject, attachments);

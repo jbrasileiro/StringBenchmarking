@@ -43,15 +43,17 @@ public class BenchmarkRunner {
 		if (!parameters.contains("-o")) {
 			throw new JMHRuntimeException("Parameter -o is required.");
 		}
-		// Options opt = opt();
-		// new org.openjdk.jmh.runner.Runner(opt);
+//		 Options opt = opt();
+//		 new org.openjdk.jmh.runner.Runner(opt);
 		org.openjdk.jmh.Main.main(args);
 		File resultOutputFile = new File(parameters.get(parameters.indexOf("-o") + 1));
 		File resultJSONFile = new File(parameters.get(parameters.indexOf("-rff") + 1));
-		sendEMail(resultOutputFile, resultJSONFile);
+
+		sendEMail("jcbrasileiro@hotmail.com", resultOutputFile, resultJSONFile);
 	}
 
 	private static void sendEMail(
+		String email,
 		File resultOutput,
 		File resultJSON) {
 		ZuzFiles.info(resultOutput);
@@ -64,7 +66,7 @@ public class BenchmarkRunner {
 			JMHResult result = converter(resultOutput);
 			Zyz.out("serializing");
 			byte[] serialized = JMHResultSerializer.serializing(result);
-			sendEmail(resultJSON, resultJSON, serialized);
+			sendEmail(email, resultJSON, resultJSON, serialized);
 		} else {
 			throw new JMHRuntimeException("File do not exist : " + resultOutput.getPath());
 		}
@@ -80,6 +82,7 @@ public class BenchmarkRunner {
 	}
 
 	private static void sendEmail(
+		String email,
 		File resultOutput,
 		File resultJSON,
 		byte[] resultSerialized) {
@@ -90,7 +93,7 @@ public class BenchmarkRunner {
 			attachments.add(DefaultCustomAttachment.bytes("serialized", resultSerialized));
 			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			String subject = "[stringbenchmarking] - " + timestamp.toString();
-			EMAIL_SENDER.send("jcbrasileiro@hotmail.com", subject, attachments);
+			EMAIL_SENDER.send(email, subject, attachments);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
